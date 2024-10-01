@@ -1,23 +1,43 @@
 import React from 'react';
-import GenderCheckbox from './GenderCheckbox'; // Assuming you want to use this in the future
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import Login from '../Login/Login';
 import { useForm } from "react-hook-form";
-
+import axios from 'axios';
+import toast from 'react-hot-toast';
 function Signup() {
+    const location = useLocation();
+    const navigate = useNavigate();
+    const from = location.state?.from?.pathname || "/";
     const {
         register,
         handleSubmit,
         formState: { errors },
     } = useForm();
 
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
+        const userInfo = {
+            fullName: data.fullName,
+            email: data.email,
+            password: data.password,
+        }
+        await axios.post("http://localhost:8000/user/signup", userInfo)
+        .then((response) => {
+            console.log(response.data);
+            if(response.data){
+                toast.success("User created successfully");
+               navigate(from, { replace: true });
+            }
+            localStorage.setItem("Users", JSON.stringify(response.data));
+        }).catch((error) => {
+            toast.error(error);
+            console.log(error.message);
+        });
         console.log(data);
         // Close the modal after successful submission
-        const modal = document.getElementById('my_modal_3');
-        if (modal) {
-            modal.close();
-        }
+        // const modal = document.getElementById('my_modal_3');
+        // if (modal) {
+        //     modal.close();
+        // }
     };
 
     return (
@@ -62,18 +82,18 @@ function Signup() {
                         />
                         {errors.password && <span className='text-red-500'>This field is required</span>}
 
-                        <label htmlFor="confirmPassword" className='label mb-0.5'>
+                        {/* <label htmlFor="confirmPassword" className='label mb-0.5'>
                             <span className='text-lg label-text text-green-400 hover:transform hover:scale-110 transition-transform duration-200'>Confirm Password</span>
-                        </label>
-                        <input
+                        </label> */}
+                        {/* <input
                             type="password"
                             {...register("confirmPassword", { required: true })}
                             placeholder='Confirm Password'
                             className='input input-bordered w-full mb-1.5 bg-gray-700 text-white border-none'
                         />
-                        {errors.confirmPassword && <span className='text-red-500'>This field is required</span>}
+                        {errors.confirmPassword && <span className='text-red-500'>This field is required</span>} */}
 
-                        <a className="text-white p-2 cursor-pointer px-3 py-2 rounded-md hover:underline duration-300"
+                        <a className="text-white mt-3 p-2 cursor-pointer px-3 py-2 rounded-md hover:underline duration-300 "
                             onClick={() => document.getElementById('my_modal_3').showModal()}>
                             Already have an account? Login
                         </a>

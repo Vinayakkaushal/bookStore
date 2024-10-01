@@ -4,7 +4,14 @@ import SearchBar from './SearchBar';
 import ThemeController from './ThemeController';
 import { Link } from 'react-router-dom';
 import Login from '../Login/Login';
+import { useAuth } from '../context/AuthProvider';
+import Logot from '../Logot';
 function NavBar() {
+    const [authUser, setAuthUser] = useAuth();
+    console.log(authUser)
+
+
+
     const [sticky , setsticky]= useState(false);
 
     useEffect(() => {
@@ -98,7 +105,7 @@ function NavBar() {
                                 </div>
                                 <ul
                                     tabIndex={0}
-                                    className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
+                                    className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow dark:bg-slate-900 text-white">
                                     {navItems}
                                 </ul>
                             </div>
@@ -112,14 +119,19 @@ function NavBar() {
                             </div>
                             <SearchBar />
                             <ThemeController />
-                            <div>
-                                <a className="bg-black text-white p-2 cursor-pointer px-3 py-2 rounded-md hover:bg-slate-800 duration-300"
-                                onClick={() => document.getElementById('my_modal_3').showModal()}>
-                                
-                                    Login
-                                </a>
-                                <Login />
-                            </div>
+
+                            {
+                              authUser ? <Logot /> :  <div>
+                              <a className="bg-black text-white p-2 cursor-pointer px-3 py-2 rounded-md hover:bg-slate-800 duration-300"
+                              onClick={() => document.getElementById('my_modal_3').showModal()}>
+                              
+                                  Login
+                              </a>
+                              
+                              <Login />
+                          </div>
+                            }
+                            
                         </div>
                     </div>
                 </div>
